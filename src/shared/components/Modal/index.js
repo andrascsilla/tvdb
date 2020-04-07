@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import { Button } from 'reactstrap';
 
 const Outside = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: calc(100% + 105px);
   width: 100%;
   position: absolute;
   top: 0;
@@ -22,9 +21,10 @@ const Wrapper = styled.div`
   flex-direction: column;
   overflow: hidden;
   width: 100%;
-  height: 100%;
+  height: 80%;
   max-width: 1200px;
   background: #fff;
+  border-radius: 10px;
 `;
 
 const TitleWrapper = styled.div`
@@ -47,12 +47,6 @@ const ContentWrapper = styled.div`
   overflow: auto;
 `;
 
-const ButtonWrapper = styled.div`
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-`;
-
 function Modal({ isOpen, title, content, onClose = () => {}, closeButtonText, ...props }) {
   if (!isOpen) {
     return null;
@@ -63,11 +57,6 @@ function Modal({ isOpen, title, content, onClose = () => {}, closeButtonText, ..
       <Wrapper onClick={e => e.stopPropagation()}>
         <TitleWrapper>{title && <ModalTitle>{title}</ModalTitle>}</TitleWrapper>
         <ContentWrapper>{content}</ContentWrapper>
-        <ButtonWrapper>
-          <Button color="danger" onClick={onClose}>
-            {closeButtonText}
-          </Button>
-        </ButtonWrapper>
       </Wrapper>
     </Outside>
   );

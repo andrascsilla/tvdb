@@ -1,11 +1,18 @@
 import React from 'react';
+import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { Table } from 'reactstrap';
-// import styled from 'styled-components';
 
-function TableComponent({ header, children, onClick = () => {}, ...props }) {
+const StyledTable = styled(Table)`
+  td {
+    vertical-align: middle;
+    cursor: pointer;
+  }
+`;
+
+function TableComponent({ header, children, ...props }) {
   return (
-    <Table striped>
+    <StyledTable striped>
       <thead>
         <tr>
           {header.map(head => (
@@ -14,7 +21,7 @@ function TableComponent({ header, children, onClick = () => {}, ...props }) {
         </tr>
       </thead>
       <tbody>{children}</tbody>
-    </Table>
+    </StyledTable>
   );
 }
 
@@ -25,7 +32,6 @@ TableComponent.propTypes = {
       value: PropTypes.node.isRequired,
     })
   ),
-  onClick: PropTypes.func,
   children: PropTypes.node,
 };
 

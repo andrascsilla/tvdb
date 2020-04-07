@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import './App.css';
 import { Container, Button, Card, CardTitle, CardText } from 'reactstrap';
@@ -15,7 +16,6 @@ const header = [
   { id: '1', value: 'Name' },
   { id: '2', value: 'Email' },
   { id: '3', value: 'Action' },
-  { id: '4', value: '' },
 ];
 
 const StyledCard = styled(Card)`
@@ -26,6 +26,10 @@ const StyledCard = styled(Card)`
 const DetailButton = styled(Button)`
   width: 50%;
   margin: 0 auto;
+`;
+
+const StyledLink = styled(Link)`
+  text-align: center;
 `;
 
 function App() {
@@ -39,40 +43,7 @@ function App() {
   // }, []);
 
   const [users, setUsers] = useState([]);
-  const [isOpen, setModal] = useState(false);
-  const [userID, setUserID] = useState([]);
-
-  //SEARCH
-  const [searchState, setSearch] = useState([
-    {
-      searchTerm: '',
-    },
-  ]);
-
-  function search(event) {
-    event.preventDefault();
-    axios
-      .get(`/users?name=${searchState.searchTerm}`)
-      .then(res => res.data)
-      .then(res => {
-        if (!res.Search) {
-          setSearch({ users: [] });
-          return;
-        }
-
-        const users = res.Search.map(user => user.name);
-        setSearch(users);
-        console.log(searchState.searchTerm);
-      });
-  }
-
-  function handleChange(event) {
-    setSearch({
-      searchTerm: event.target.value,
-    });
-    console.log(searchState.searchTerm);
-  }
-  //SEARCH
+  const [modalUser, setModalUser] = useState();
 
   useEffect(() => {
     axios.get('/users').then(resp => {
@@ -80,65 +51,60 @@ function App() {
     });
   }, []);
 
-  function handleClick() {
-    axios.get(`/users/${userID}`).then(resp => {
-      setUserID(resp.data);
-      console.log(userID.id);
+  function search(event) {
+    axios.get(`/users?name=${event}`).then(res => {
+      setUsers(res.data);
     });
   }
 
-  function toggleModal() {
-    setModal(!isOpen);
+  function toggleModal(id) {
+    const currentUser = users.find(user => user.id === id);
+    setModalUser(currentUser);
   }
 
   return (
     <Container>
-      <SearchField
-        labelText="Search:"
-        placeholder="Type a name here..."
-        buttonText="Search"
-        onSubmit={search}
-        onChange={handleChange}
-        // onChange={handleChange(users.filter(value => value !== 'valami'.value))}
-      />
+      <SearchField labelText="Search:" placeholder="Type a name here..." buttonText="Search" onSubmit={search} />
 
       <TableComponent header={header} onClick={() => console.log('xxxx')}>
         {users.map(user => (
-          <tr key={user.id}>
+          <tr
+            key={user.id}
+            onClick={() => {
+              toggleModal(user.id);
+            }}
+          >
             <td>{user.name}</td>
             <td>{user.email}</td>
             <td>
-              <>
-                <Button color="primary" onClick={toggleModal}>
-                  Details
-                </Button>
-
-                {/* TODO: specified data for every user */}
-                <Modal
-                  onClick={toggleModal}
-                  isOpen={isOpen}
-                  title={user.name}
-                  content={
-                    <StyledCard body>
-                      <CardTitle>Details about: {user.name}</CardTitle>
-                      <CardText>Username: {user.username}</CardText>
-                      <CardText>Email: {user.email}</CardText>
-                      <CardText>Phone: {user.phone}</CardText>
-                      <CardText>Website: {user.website}</CardText>
-                      <DetailButton>Click here to find more about {user.name}</DetailButton>
-                    </StyledCard>
-                  }
-                  closeButtonText="Cancel"
-                />
-              </>
-            </td>
-            <td>
-              <Button color="primary" onClick={() => handleClick(userID.id)}>
-                Click
-              </Button>
+              <Link to={`/${user.id}`}>
+                <Button color="info">Details</Button>
+              </Link>
             </td>
           </tr>
         ))}
+
+        {modalUser && (
+          <Modal
+            onClick={() => setModalUser()}
+            isOpen={!!modalUser}
+            title={modalUser.name}
+            content={
+              <StyledCard body>
+                <CardTitle>
+                  Details about <strong>{modalUser.name}</strong>
+                </CardTitle>
+                <CardText>Username: {modalUser.username}</CardText>
+                <CardText>Email: {modalUser.email}</CardText>
+                <CardText>Phone: {modalUser.phone}</CardText>
+                <CardText>Website: {modalUser.website}</CardText>
+                <StyledLink to={`/${modalUser.id}`}>
+                  <DetailButton>Click here to find more about {modalUser.name}</DetailButton>
+                </StyledLink>
+              </StyledCard>
+            }
+          />
+        )}
       </TableComponent>
     </Container>
   );
