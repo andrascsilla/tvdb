@@ -8,8 +8,8 @@ import SearchField from './shared/components/SearchField';
 import TableComponent from './shared/components/TableComponent';
 import axios from 'axios';
 import Modal from './shared/components/Modal';
+import { useParams } from 'react-router-dom';
 
-// axios.defaults.baseURL = 'http://localhost:3001';
 axios.defaults.baseURL = 'http://jsonplaceholder.typicode.com';
 
 const header = [
@@ -33,26 +33,25 @@ const StyledLink = styled(Link)`
 `;
 
 function App() {
-  // const [movies, setMovies] = useState([]);
-
-  // useEffect(() => {
-  //   axios.get('/user').then(resp => {
-  //     setMovies(resp.data.results);
-  //     console.log('xxx' + resp.data.results);
-  //   });
-  // }, []);
-
   const [users, setUsers] = useState([]);
   const [modalUser, setModalUser] = useState();
+  const { searchString } = useParams();
 
+  console.log(searchString);
   useEffect(() => {
-    axios.get('/users').then(resp => {
-      setUsers(resp.data);
-    });
+    if (typeof searchString === 'undefined') {
+      axios.get(`/users`).then(resp => {
+        setUsers(resp.data);
+      });
+    } else {
+      axios.get(`/users?email=${searchString}`).then(resp => {
+        setUsers(resp.data);
+      });
+    }
   }, []);
 
   function search(event) {
-    axios.get(`/users?name=${event}`).then(res => {
+    axios.get(`/users?email=${event}`).then(res => {
       setUsers(res.data);
     });
   }

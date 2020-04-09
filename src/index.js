@@ -41,7 +41,7 @@ ReactDOM.render(
           <Route path="/:id">
             <User />
           </Route>
-          <Route path="/">
+          <Route path="/:searchString?">
             <App />
           </Route>
         </Switch>
