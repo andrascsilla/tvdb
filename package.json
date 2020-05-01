@@ -16,7 +16,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.1",
     "reactstrap": "^8.4.1",
-    "request": "~2.36.0",
+    "request": "~2.88.2",
     "styled-components": "^5.0.1",
     "swagger-ui-react": "^3.25.0"
   },
